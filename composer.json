@@ -1,0 +1,54 @@
+{
+    "name": "brondby/payment-gateway",
+    "description": "Payment Gateway - Reepay",
+    "keywords": [
+        "brondby",
+        "payment-gateway"
+    ],
+    "homepage": "https://github.com/brondby/payment-gateway",
+    "license": "The Unlicense",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Thomas Prip Vestergaard",
+            "email": "tpv@brondby.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brondby\\PaymentGateway\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Brondby\\PaymentGateway\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Brondby\\PaymentGateway\\PaymentGatewayServiceProvider"
+            ],
+            "aliases": {
+                "PaymentGateway": "Brondby\\PaymentGateway\\PaymentGatewayFacade"
+            }
+        }
+    }
+}
