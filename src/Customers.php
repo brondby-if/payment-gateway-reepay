@@ -116,6 +116,25 @@ class Customers
     }
 
     /**
+     * Create or Update a Customer by ID.
+     *
+     * @param array $options Options.
+     *
+     * @return mixed
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     */
+    public function createOrUpdate($inputHandle, $inputEmail, $inputFirstName, $inputLastName)
+    {
+        $getCustomer = $this->get($inputHandle);
+        if ($getCustomer === false) {
+            return $this->create($inputHandle, $inputEmail, $inputFirstName, $inputLastName);
+        }
+
+        return $this->update($inputHandle, $inputEmail, $inputFirstName, $inputLastName);
+    }
+
+    /**
      * Delete a Customer by ID.
      *
      * A customer can only be deleted if it has none or only expired subscriptions, and no pending or dunning invoices.

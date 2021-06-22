@@ -37,7 +37,7 @@ class Subscriptions
     }
 
     /**
-     * Get list of subscriptions.
+     * Get list of Subscriptions.
      *
      * @param array $options Options.
      *
@@ -66,6 +66,29 @@ class Subscriptions
     }
 
     /**
+     * Get list of Subscriptions by Customer.
+     *
+     * @param array $options Options.
+     *
+     * @return mixed
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     */
+    public function getByCustomer(string $customerId)
+    {
+        $this->apiEndPoint = 'subscription?search=customer.handle:'.$customerId;
+        $this->requestType = 'get';
+        $responseSubscriptions = $this->performHttpRequest();
+
+        $subscriptions = [];
+        foreach ($responseSubscriptions['content'] as $subscription) {
+            array_push($subscriptions, (new SubscriptionResource($subscription))->resolve());
+        }
+
+        return $subscriptions;
+    }
+
+    /**
      * Create a Subscription.
      *
      * @return mixed
@@ -78,6 +101,7 @@ class Subscriptions
         $data['plan'] = $inputPlan;
         $data['customer'] = $inputCustomer;
         $data['generate_handle'] = true;
+        $data['conditional_create'] = true;
 
         $this->apiEndPoint = 'subscription';
         $this->requestType = 'post';
@@ -98,8 +122,10 @@ class Subscriptions
      */
     public function cancel(string $subscriptionId)
     {
+        $data['handle'] = $subscriptionId;
         $this->apiEndPoint = 'subscription/'.$subscriptionId.'/cancel';
         $this->requestType = 'post';
+        $this->requestData = $data;
         $response = $this->performHttpRequest();
 
         return isset($response['error']) ? false : true;
@@ -116,8 +142,10 @@ class Subscriptions
      */
     public function uncancel(string $subscriptionId)
     {
+        $data['handle'] = $subscriptionId;
         $this->apiEndPoint = 'subscription/'.$subscriptionId.'/uncancel';
         $this->requestType = 'post';
+        $this->requestData = $data;
         $response = $this->performHttpRequest();
 
         return isset($response['error']) ? false : true;

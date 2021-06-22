@@ -12,6 +12,11 @@ use Exception;
 class PaymentGatewayClient
 {
     /**
+     * Name of the Payment Gayeway
+     */
+    public $name = 'Reepay';
+
+    /**
      * Instance of Brondby\PaymentGateway\Checkout
      */
     public $checkout;
@@ -35,6 +40,11 @@ class PaymentGatewayClient
      * Instance of Brondby\PaymentGateway\Subscriptions
      */
     public $subscriptions;
+
+    /**
+     * Instance of Brondby\PaymentGateway\PaymentMethods
+     */
+    public $paymentMethods;
 
     /**
      * Return an instance of the Invoices class.
@@ -104,5 +114,19 @@ class PaymentGatewayClient
         }
 
         return $this->checkout;
+    }
+
+    /**
+     * Return an instance of the PaymentMethods class.
+     *
+     * @return PaymentMethods
+     */
+    public function paymentMethods() : PaymentMethods
+    {
+        if (! $this->paymentMethods instanceof PaymentMethods) {
+            $this->paymentMethods = new PaymentMethods();
+        }
+
+        return $this->paymentMethods;
     }
 }

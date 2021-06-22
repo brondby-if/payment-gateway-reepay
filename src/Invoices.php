@@ -66,6 +66,31 @@ class Invoices
     }
 
     /**
+     * Get list of all Invoices by Customer ID.
+     *
+     * @param array $options Options.
+     *
+     * @return array
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     */
+    public function getByCustomer(string $customerId)
+    {
+        $data['search'] = 'customer.handle:'.$customerId;
+        $this->apiEndPoint = 'invoice';
+        $this->requestType = 'get';
+        $this->requestData = $data;
+        $responseInvoices = $this->performHttpRequest();
+
+        $invoices = [];
+        foreach ($responseInvoices['content'] as $invoice) {
+            array_push($invoices, (new InvoiceResource($invoice))->resolve());
+        }
+
+        return $invoices;
+    }
+
+    /**
      * Cancel an Invoice by ID.
      *
      * @param string $invoiceId Invoice ID to get.

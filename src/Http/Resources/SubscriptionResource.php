@@ -22,7 +22,7 @@ class SubscriptionResource extends JsonResource
             'state' => $this['state'],
             'quantity' => $this['quantity'],
             'created' => $this['created'],
-            'activated' => $this['activated'],
+            'activated' => $this['activated'] ?? null,
             'renewing' => $this['renewing'],
             'start_date' => $this['start_date'],
             'current_period_start' => $this['current_period_start'],
@@ -31,7 +31,7 @@ class SubscriptionResource extends JsonResource
             'in_trial' => $this['in_trial'],
             'has_started' => $this['has_started'],
             'renewal_count' => $this['renewal_count'],
-            'expired_date' => $this['expired_date'],
+            'expired_date' => $this['expired_date'] ?? null,
             'payment_method_added' => $this['payment_method_added'],
             'hosted_page_links' => $this['hosted_page_links'],
         ];
