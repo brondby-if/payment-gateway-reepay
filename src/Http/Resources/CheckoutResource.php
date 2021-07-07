@@ -10,7 +10,7 @@ class CheckoutResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @todo make resource file for order line items 
+     * @todo make resource file for order line items
      * @return array
      */
     public function toArray($request)
