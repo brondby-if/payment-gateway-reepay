@@ -3,6 +3,7 @@
 namespace Brondby\PaymentGateway;
 
 use Brondby\PaymentGateway\Http\Resources\CustomerResource;
+use Brondby\PaymentGateway\Traits\HandleHelper;
 use Brondby\PaymentGateway\Traits\PaymentGatewayHttpClient;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,7 @@ use RuntimeException;
 class Customers
 {
     use PaymentGatewayHttpClient;
+    use HandleHelper;
 
     /**
      * Get a single Customer by ID.
@@ -29,7 +31,7 @@ class Customers
      */
     public function get(string $customerId)
     {
-        $this->apiEndPoint = 'customer/'.$customerId;
+        $this->apiEndPoint = 'customer/'.$this->getCustomerHandle($customerId);
         $this->requestType = 'get';
         $response = $this->performHttpRequest();
 
@@ -74,10 +76,10 @@ class Customers
      *
      * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
      */
-    public function create($inputHandle, $inputEmail, $inputFirstName, $inputLastName)
+    public function create($customerId, $inputEmail, $inputFirstName, $inputLastName)
     {
         $data = [];
-        $data['handle'] = $inputHandle;
+        $data['handle'] = $this->getCustomerHandle($customerId);
         $data['email'] = $inputEmail;
         $data['first_name'] = $inputFirstName;
         $data['last_name'] = $inputLastName;
@@ -91,6 +93,25 @@ class Customers
     }
 
     /**
+     * Get or Create a Customer.
+     *
+     * @param array $options Options.
+     *
+     * @return array
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     */
+    public function getOrCreate($customerId, $inputEmail, $inputFirstName, $inputLastName)
+    {
+        $getCustomer = $this->get($customerId);
+        if (empty($getCustomer['handle'])) {
+            $getCustomer = $this->create($customerId, $inputEmail, $inputFirstName, $inputLastName);
+        }
+
+        return $getCustomer;
+    }
+
+    /**
      * Update a Customer by ID.
      *
      * Updates the specified customer by setting the values of the parameters passed. Any parameters not provided will be deleted.
@@ -99,15 +120,15 @@ class Customers
      *
      * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
      */
-    public function update($inputHandle, $inputEmail, $inputFirstName, $inputLastName)
+    public function update($customerId, $inputEmail, $inputFirstName, $inputLastName)
     {
         $data = [];
-        $data['handle'] = $inputHandle;
+        $data['handle'] = $this->getCustomerHandle($customerId);
         $data['email'] = $inputEmail;
         $data['first_name'] = $inputFirstName;
         $data['last_name'] = $inputLastName;
 
-        $this->apiEndPoint = 'customer/'.$inputHandle;
+        $this->apiEndPoint = 'customer/'.$this->getCustomerHandle($customerId);
         $this->requestType = 'put';
         $this->requestData = $data;
         $response = $this->performHttpRequest();
@@ -124,14 +145,14 @@ class Customers
      *
      * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
      */
-    public function createOrUpdate($inputHandle, $inputEmail, $inputFirstName, $inputLastName)
+    public function createOrUpdate($customerId, $inputEmail, $inputFirstName, $inputLastName)
     {
-        $getCustomer = $this->get($inputHandle);
-        if ($getCustomer === false) {
-            return $this->create($inputHandle, $inputEmail, $inputFirstName, $inputLastName);
+        $getCustomer = $this->get($customerId);
+        if (empty($getCustomer['handle'])) {
+            return $this->create($customerId, $inputEmail, $inputFirstName, $inputLastName);
         }
 
-        return $this->update($inputHandle, $inputEmail, $inputFirstName, $inputLastName);
+        return $this->update($customerId, $inputEmail, $inputFirstName, $inputLastName);
     }
 
     /**
@@ -147,7 +168,7 @@ class Customers
      */
     public function delete(string $customerId)
     {
-        $this->apiEndPoint = 'customer/'.$customerId;
+        $this->apiEndPoint = 'customer/'.$this->get($customerId);
         $this->requestType = 'delete';
         $response = $this->performHttpRequest();
 

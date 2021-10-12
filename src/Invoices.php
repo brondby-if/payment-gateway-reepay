@@ -3,6 +3,7 @@
 namespace Brondby\PaymentGateway;
 
 use Brondby\PaymentGateway\Http\Resources\InvoiceResource;
+use Brondby\PaymentGateway\Traits\HandleHelper;
 use Brondby\PaymentGateway\Traits\PaymentGatewayHttpClient;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,7 @@ use RuntimeException;
 class Invoices
 {
     use PaymentGatewayHttpClient;
+    use HandleHelper;
 
     /**
      * Get a single Invoice by ID.
@@ -76,7 +78,7 @@ class Invoices
      */
     public function getByCustomer(string $customerId)
     {
-        $data['search'] = 'customer.handle:'.$customerId;
+        $data['search'] = 'customer.handle:'.$this->getCustomerHandle($customerId);
         $this->apiEndPoint = 'invoice';
         $this->requestType = 'get';
         $this->requestData = $data;

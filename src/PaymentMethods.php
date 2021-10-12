@@ -3,6 +3,7 @@
 namespace Brondby\PaymentGateway;
 
 use Brondby\PaymentGateway\Http\Resources\PaymentMethodResource;
+use Brondby\PaymentGateway\Traits\HandleHelper;
 use Brondby\PaymentGateway\Traits\PaymentGatewayHttpClient;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,7 @@ use RuntimeException;
 class PaymentMethods
 {
     use PaymentGatewayHttpClient;
+    use HandleHelper;
 
     /**
      * Get a single Payment Method by ID.
@@ -51,7 +53,7 @@ class PaymentMethods
      */
     public function getByCustomer(string $customerId)
     {
-        $this->apiEndPoint = 'customer/'.$customerId.'/payment_method';
+        $this->apiEndPoint = 'customer/'.$this->getCustomerHandle($customerId).'/payment_method';
         $this->requestType = 'get';
         $responsePaymentMethods = $this->performHttpRequest();
 
@@ -97,7 +99,7 @@ class PaymentMethods
      */
     public function delete(string $customerId, string $paymentMethodId)
     {
-        $this->apiEndPoint = 'customer/'.$customerId.'/payment_method/'.$paymentMethodId;
+        $this->apiEndPoint = 'customer/'.$this->getCustomerHandle($customerId).'/payment_method/'.$paymentMethodId;
         $this->requestType = 'delete';
         $response = $this->performHttpRequest();
 

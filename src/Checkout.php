@@ -67,4 +67,28 @@ class Checkout
 
         return (new CheckoutResource($response))->resolve();
     }
+
+    /**
+     * Create a Payment Window Session.
+     *
+     * @return array
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     */
+    public function updateSubscription($inputSubscription, $inputAcceptUrl, $inputCancelUrl)
+    {
+        $data = [];
+        $data['subscription'] = $inputSubscription;
+        $data['show_subscription_details'] = true;
+        $data['accept_url'] = $inputAcceptUrl;
+        $data['cancel_url'] = $inputCancelUrl;
+
+        $this->apiUrl = 'https://checkout-api.reepay.com/v1/';
+        $this->apiEndPoint = 'session/subscription';
+        $this->requestType = 'post';
+        $this->requestData = $data;
+        $response = $this->performHttpRequest();
+
+        return (new CheckoutResource($response))->resolve();
+    }
 }

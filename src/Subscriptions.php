@@ -3,6 +3,7 @@
 namespace Brondby\PaymentGateway;
 
 use Brondby\PaymentGateway\Http\Resources\SubscriptionResource;
+use Brondby\PaymentGateway\Traits\HandleHelper;
 use Brondby\PaymentGateway\Traits\PaymentGatewayHttpClient;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,7 @@ use RuntimeException;
 class Subscriptions
 {
     use PaymentGatewayHttpClient;
+    use HandleHelper;
 
     /**
      * Get a single Subscription by ID.
@@ -52,6 +54,10 @@ class Subscriptions
             $data['page'] = $options['page'];
         }
 
+        if (isset($options['status'])) {
+            $data['search'] = 'state:'.$options['status'];
+        }
+
         $this->apiEndPoint = 'subscription';
         $this->requestType = 'get';
         $this->requestData = $data;
@@ -76,8 +82,10 @@ class Subscriptions
      */
     public function getByCustomer(string $customerId)
     {
-        $this->apiEndPoint = 'subscription?search=customer.handle:'.$customerId;
+        $data['search'] = 'customer.handle:'.$this->getCustomerHandle($customerId);
+        $this->apiEndPoint = 'subscription';
         $this->requestType = 'get';
+        $this->requestData = $data;
         $responseSubscriptions = $this->performHttpRequest();
 
         $subscriptions = [];
@@ -105,6 +113,28 @@ class Subscriptions
 
         $this->apiEndPoint = 'subscription';
         $this->requestType = 'post';
+        $this->requestData = $data;
+        $response = $this->performHttpRequest();
+
+        return isset($response['error']) ? false : (new SubscriptionResource($response))->resolve();
+    }
+
+    /**
+     * Change a Subscription to another plan.
+     *
+     * @return mixed
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     */
+    public function change($subscriptionId, $inputPlan)
+    {
+        $data = [];
+        $data['handle'] = $subscriptionId;
+        $data['plan'] = $inputPlan;
+        $data['timing'] = 'immediate';
+
+        $this->apiEndPoint = 'subscription/'.$subscriptionId;
+        $this->requestType = 'put';
         $this->requestData = $data;
         $response = $this->performHttpRequest();
 
