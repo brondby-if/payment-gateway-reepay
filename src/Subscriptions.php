@@ -126,12 +126,12 @@ class Subscriptions
      *
      * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
      */
-    public function change($subscriptionId, $inputPlan)
+    public function change($subscriptionId, $inputPlan, $inputTiming = 'immediate')
     {
         $data = [];
         $data['handle'] = $subscriptionId;
         $data['plan'] = $inputPlan;
-        $data['timing'] = 'immediate';
+        $data['timing'] = $inputTiming;
 
         $this->apiEndPoint = 'subscription/'.$subscriptionId;
         $this->requestType = 'put';

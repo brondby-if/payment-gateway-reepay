@@ -15,18 +15,20 @@ class PlanResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'handle' => $this['handle'],
+            'id' => $this['handle'],
             'name' => $this['name'],
-            'vat' => $this['vat'],
-            'amount' => $this['amount'],
-            'quantity' => $this['quantity'],
-            'prepaid' => $this['prepaid'],
+            'amount' => $this->unitToAmount($this['amount']),
             'version' => $this['version'],
-            'state' => $this['state'],
+            'status' => $this['state'],
             'currency' => $this['currency'],
             'created' => $this['created'],
             'interval_length' => $this['interval_length'],
             'schedule_type' => $this['schedule_type'],
         ];
+    }
+
+    public function unitToAmount($amount)
+    {
+        return $amount / 100;
     }
 }

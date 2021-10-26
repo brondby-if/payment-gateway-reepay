@@ -4,6 +4,7 @@ namespace Brondby\PaymentGateway;
 
 use Brondby\PaymentGateway\Checkout;
 use Brondby\PaymentGateway\Customers;
+use Brondby\PaymentGateway\Events;
 use Brondby\PaymentGateway\Invoices;
 use Brondby\PaymentGateway\Plans;
 use Brondby\PaymentGateway\Subscriptions;
@@ -45,6 +46,11 @@ class PaymentGatewayClient
      * Instance of Brondby\PaymentGateway\PaymentMethods
      */
     public $paymentMethods;
+
+    /**
+     * Instance of Brondby\PaymentGateway\Events
+     */
+    public $events;
 
     /**
      * Return an instance of the Invoices class.
@@ -128,5 +134,19 @@ class PaymentGatewayClient
         }
 
         return $this->paymentMethods;
+    }
+
+    /**
+     * Return an instance of the Events class.
+     *
+     * @return Events
+     */
+    public function events() : Events
+    {
+        if (! $this->events instanceof Events) {
+            $this->events = new Events();
+        }
+
+        return $this->events;
     }
 }

@@ -31,4 +31,19 @@ trait HandleHelper
     {
         return $this->getCustomerPrefix().$id;
     }
+
+    /**
+     * Remove customer prefix from string.
+     *
+     * @return string
+     */
+    public function removeCustomerPrefix($id)
+    {
+        $prefix = $this->getCustomerPrefix();
+        if (empty($prefix)) {
+            return $id;
+        }
+
+        return ltrim($id, $prefix.'-');
+    }
 }
