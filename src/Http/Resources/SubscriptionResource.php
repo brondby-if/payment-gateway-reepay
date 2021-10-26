@@ -23,6 +23,7 @@ class SubscriptionResource extends JsonResource
             'quantity' => $this['quantity'],
             'created' => $this['created'],
             'activated' => $this['activated'] ?? null,
+            'expires_at' => $this['expires'] ?? null,
             'renewing' => $this['renewing'],
             'start_date' => $this['start_date'],
             'current_period_start' => $this['current_period_start'],
